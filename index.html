@@ -469,62 +469,6 @@ form.addEventListener('submit', e => {
 
 
 
-// ১. মাউসের রাইট ক্লিক (Context Menu) বন্ধ করার জন্য
-document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-});
-
-// ২. কীবোর্ড শর্টকাট (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, PrintScreen) ব্লক করার জন্য
-document.addEventListener('keydown', function(e) {
-    // F12 বন্ধ করা
-    if (e.key === "F12") {
-        e.preventDefault();
-        return false;
-    }
-    
-    // Ctrl+Shift+I (Inspect element) বন্ধ করা
-    if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-        e.preventDefault();
-        return false;
-    }
-    
-    // Ctrl+Shift+J (Console) বন্ধ করা
-    if (e.ctrlKey && e.shiftKey && e.key === 'J') {
-        e.preventDefault();
-        return false;
-    }
-    
-    // Ctrl+U (View Source) বন্ধ করা
-    if (e.ctrlKey && e.key === 'U') {
-        e.preventDefault();
-        return false;
-    }
-
-    // Ctrl+S (Save Page) বন্ধ করা
-    if (e.ctrlKey && e.key === 'S') {
-        e.preventDefault();
-        return false;
-    }
-
-    // Ctrl+P (Print Page / Snipping Tool Trigger) বন্ধ করা
-    if (e.ctrlKey && e.key === 'P') {
-        e.preventDefault();
-        return false;
-    }
-});
-
-// ৩. ট্রিকি মেথড: ইউজার যদি Snipping Tool বা অন্য উইন্ডো ওপেন করে (অর্থাৎ ব্রাউজার থেকে ফোকাস চলে যায়), তবে পেজ ব্লার বা হাইড করে দেওয়া
-window.addEventListener('blur', function() {
-    // পুরো বডি ব্লার করে দেওয়া যাতে স্ক্রিনশট ঝাপসা আসে
-    document.body.style.filter = 'blur(15px)';
-});
-
-window.addEventListener('focus', function() {
-    // ইউজার আবার পেজে ফিরে আসলে ব্লার সরিয়ে দেওয়া
-    document.body.style.filter = 'none';
-});
-
-
 
 	  
     </script>

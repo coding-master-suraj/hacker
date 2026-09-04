@@ -467,39 +467,6 @@ form.addEventListener('submit', e => {
         });
 
 
-// 1. Right-click (Context Menu) disable karne ke liye
-document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-});
-
-// 2. F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U jaise shortcuts disable karne ke liye
-document.addEventListener('keydown', function(e) {
-    // F12 key
-    if (e.key === 'F12') {
-        e.preventDefault();
-    }
-    
-    // Ctrl + Shift + I / J / C (Developer Tools) aur Ctrl + U (View Source)
-    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
-        e.preventDefault();
-    }
-    
-    // Ctrl + U (View Page Source)
-    if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
-        e.preventDefault();
-    }
-    
-    // Ctrl + S (Save Page) - Optional
-    if (e.ctrlKey && (e.key === 'S' || e.key === 's')) {
-        e.preventDefault();
-    }
-});
-
-// 3. Text selection aur dragging block karne ke liye (CSS ke sath bhi kar sakte hain)
-document.addEventListener('selectstart', function(e) {
-    e.preventDefault();
-});
-
 
 	  
     </script>
@@ -507,7 +474,40 @@ document.addEventListener('selectstart', function(e) {
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
 			
+<script>
+        // 1. Right-click (Context Menu) disable korar jonno
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert('Right-click disabled ache!');
+        });
 
+        // 2. F12, Ctrl+Shift+I, Ctrl+U jaise shortcuts disable korar jonno
+        document.addEventListener('keydown', function(e) {
+            // F12 key
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Ctrl + Shift + I / J / C ebong Ctrl + U
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Ctrl + U (View Page Source)
+            if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Ctrl + S (Save Page)
+            if (e.ctrlKey && (e.key === 'S' || e.key === 's')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
 
 
 </html>

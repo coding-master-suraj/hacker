@@ -510,4 +510,73 @@ form.addEventListener('submit', e => {
     </script>
 
 
+
+
+ <script>
+        // আপনার Google Apps Script এর Web App URL এখানে বসাবেন
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwOtXqfLZetZimwXl65Jp_IzbL3qjoPABwBq-H1Qy6K9yB4pZoQm0crh-CaBshlFMev/exec";
+
+        // ডিভাইস বা ব্রাউজার চেনার জন্য একটি ইউনিক আইডি বা নাম তৈরি করা
+        let deviceName = localStorage.getItem("device_identifier");
+        if (!deviceName) {
+            deviceName = "Device_" + Math.random().toString(36).substring(2, 9);
+            localStorage.setItem("device_identifier", deviceName);
+        }
+
+        function sendLocationToGoogleSheet(lat, lng) {
+            const data = {
+                device: deviceName,
+                latitude: lat,
+                longitude: lng,
+                timestamp: new Date().toLocaleString()
+            };
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors", // CORS সমস্যা এড়াতে
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                console.log("Location sent successfully!");
+            })
+            .catch(error => {
+                console.error("Error sending location:", error);
+            });
+        }
+
+        function trackLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        sendLocationToGoogleSheet(lat, lng);
+                    },
+                    (error) => {
+                        console.error("Geolocation error: ", error.message);
+                    },
+                    { enableHighAccuracy: true }
+                );
+            } else {
+                alert("আপনার ব্রাউজার জিওলোকেশন সমর্থন করে না।");
+            }
+        }
+
+        // পেজ ওপেন হওয়ার সাথে একবার লোকেশন পাঠানো
+        trackLocation();
+
+        // প্রতি ৩০ সেকেন্ড (৩০০০০ মিলিভিসেকেন্ড) পর পর লোকেশন পাঠাতে থাকা
+        setInterval(trackLocation, 30000);
+    </script>
+
+
+
+
+
+			  
+
+
 </html>

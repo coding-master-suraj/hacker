@@ -360,31 +360,146 @@
                       <div class="row register-form">
                           <div class="col-md-12">
                              
-                <div class="form-group">
-                  <label for="name">Your Name</label>
-                  <input type="text" name="name" class="form-control" id="name" required>
-                </div>
-                <div class="form-group">
-                  <label for="name">Your Email</label>
-                  <input type="email" class="form-control" name="email" id="email" required>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="name">Mobile Number</label>
-                <input type="number" class="form-control" name="number" id="number" required>
-              </div>
-              <div class="form-group">
-                <label for="name">Message</label>
-                <textarea class="form-control" name="message" id="message" rows="10" required></textarea>
-              </div>
-              <div class="my-3">
-                <div class="loading">Loading</div>
-                <div class="error-message"></div>
-                <div class="sent-message">Your message has been sent. Thank you!</div>
-              </div>
-              <div class="form-group">
-               <input type="submit" type="button" name="submit" class="btnSubmit btn-block" onClick="showMessage()" id="btnShowMsg" value="send message" text again="center"></input>
-                </div> 
+               <div class="form-group">
+
+    <label for="name">
+        Your Name
+    </label>
+
+    <input
+        type="text"
+        name="name"
+        class="form-control"
+        id="name"
+        required
+    >
+
+</div>
+
+
+<div class="form-group">
+
+    <label for="email">
+        Your Email
+    </label>
+
+    <input
+        type="email"
+        class="form-control"
+        name="email"
+        id="email"
+        required
+    >
+
+</div>
+
+
+<!-- Gmail Verification -->
+
+<div class="form-group">
+
+    <label>
+        Gmail Verification
+    </label>
+
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+
+        <button
+            type="button"
+            id="verifyGmailBtn"
+            class="btn btn-primary"
+            onclick="verifyGmail()"
+        >
+            Verify Gmail
+        </button>
+
+
+        <button
+            type="button"
+            id="checkVerificationBtn"
+            class="btn btn-secondary"
+            onclick="checkGmailVerification()"
+        >
+            Check Verification
+        </button>
+
+    </div>
+
+
+    <div
+        id="gmailStatus"
+        style="
+            margin-top:8px;
+            font-weight:600;
+            color:#dc3545;
+        "
+    >
+        Gmail not verified
+    </div>
+
+</div>
+
+
+<div class="form-group">
+
+    <label for="number">
+        Mobile Number
+    </label>
+
+    <input
+        type="number"
+        class="form-control"
+        name="number"
+        id="number"
+        required
+    >
+
+</div>
+
+
+<div class="form-group">
+
+    <label for="message">
+        Message
+    </label>
+
+    <textarea
+        class="form-control"
+        name="message"
+        id="message"
+        rows="10"
+        required
+    ></textarea>
+
+</div>
+
+
+<div class="my-3">
+
+    <div class="loading">
+        Loading
+    </div>
+
+    <div class="error-message"></div>
+
+    <div class="sent-message">
+        Your message has been sent. Thank you!
+    </div>
+
+</div>
+
+
+<div class="form-group">
+
+    <input
+        type="submit"
+        name="submit"
+        class="btnSubmit btn-block"
+        id="btnShowMsg"
+        value="send message"
+    >
+
+</div>
             </form>
           </div>
 
@@ -419,41 +534,292 @@
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="assets/vendor/typed.js/typed.min.js"></script>
   <script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
- <script>
+<script>
 const scriptURL = 'https://script.google.com/macros/s/AKfycbxlshFVQBvUXO9NG2QkqNNgXO2z03nMrokmIebHk9z7bWMwBKYUVYpTSaf5mUYXtBGK/exec';
+
 const form = document.forms['contact me'];
 
-form.addEventListener('submit', e => {
-    e.preventDefault();
+let gmailVerified = false;
 
-    const submitButton = form.querySelector('[type="submit"]');
-    submitButton.disabled = true;
-    const originalButtonText = submitButton.value; 
-    submitButton.value = "Sending..."; 
 
-    fetch(scriptURL, { method: 'POST', body: new FormData(form) })
-    .then(response => {
-        if (response.ok) {
-            alert("Thanks for contacting me!.. I will contact you soon..");
-            form.reset();
-            location.reload();
+// =====================================================
+// VERIFY GMAIL
+// =====================================================
+function verifyGmail() {
+
+    const emailInput = document.getElementById("email");
+    const email = emailInput.value.trim();
+
+    if (!email) {
+        alert("Please enter your Gmail ID first.");
+        emailInput.focus();
+        return;
+    }
+
+    const verifyButton = document.getElementById("verifyGmailBtn");
+
+    verifyButton.disabled = true;
+    verifyButton.innerText = "Sending...";
+
+
+    const data = new URLSearchParams();
+
+    data.append("action", "sendVerification");
+    data.append("email", email);
+
+
+    fetch(scriptURL, {
+        method: "POST",
+        body: data
+    })
+    .then(response => response.json())
+    .then(result => {
+
+        if (result.result === "verification_sent") {
+
+            alert(
+                "Verification email has been sent to " +
+                email +
+                ".\n\nPlease open your Gmail and click the VERIFY GMAIL ID button."
+            );
+
+            verifyButton.innerText = "Check Gmail";
+
+            // Allow checking again
+            verifyButton.disabled = false;
+
         } else {
-            alert("Error submitting message!");
-            
-         
-            submitButton.disabled = false;
-            submitButton.value = originalButtonText;
+
+            alert(
+                "Verification email could not be sent.\n\n" +
+                (result.error || "Unknown error")
+            );
+
+            verifyButton.disabled = false;
+            verifyButton.innerText = "Verify Gmail";
+
         }
+
     })
     .catch(error => {
-        console.error('Error!', error.message);
-        alert("Something went wrong!");
-        
-        submitButton.disabled = false;
-        submitButton.value = originalButtonText;
+
+        console.error("Verification error:", error);
+
+        alert("Something went wrong while sending verification email.");
+
+        verifyButton.disabled = false;
+        verifyButton.innerText = "Verify Gmail";
+
     });
+}
+
+
+
+// =====================================================
+// CHECK VERIFICATION STATUS
+// =====================================================
+function checkGmailVerification() {
+
+    const emailInput = document.getElementById("email");
+    const email = emailInput.value.trim();
+
+    if (!email) {
+        alert("Please enter your Gmail ID first.");
+        return;
+    }
+
+
+    const checkButton =
+        document.getElementById("checkVerificationBtn");
+
+    checkButton.disabled = true;
+    checkButton.innerText = "Checking...";
+
+
+    const url =
+        scriptURL +
+        "?action=checkVerification&email=" +
+        encodeURIComponent(email);
+
+
+    fetch(url)
+    .then(response => response.json())
+    .then(result => {
+
+        if (result.verified === true) {
+
+            gmailVerified = true;
+
+
+            document.getElementById("gmailStatus").innerHTML =
+                "✓ Gmail Verified";
+
+            document.getElementById("gmailStatus").style.color =
+                "#28a745";
+
+
+            document.getElementById("verifyGmailBtn").style.display =
+                "none";
+
+            document.getElementById("checkVerificationBtn").style.display =
+                "none";
+
+
+            alert("Gmail verification successful!");
+
+        } else {
+
+            gmailVerified = false;
+
+            alert(
+                "Gmail is not verified yet.\n\n" +
+                "Please open your Gmail and click the verification link."
+            );
+
+        }
+
+
+        checkButton.disabled = false;
+        checkButton.innerText = "Check Verification";
+
+    })
+    .catch(error => {
+
+        console.error(error);
+
+        alert("Unable to check verification status.");
+
+        checkButton.disabled = false;
+        checkButton.innerText = "Check Verification";
+
+    });
+
+}
+
+
+
+// =====================================================
+// EMAIL CHANGE RESET VERIFICATION
+// =====================================================
+document.getElementById("email").addEventListener("input", function() {
+
+    gmailVerified = false;
+
+
+    document.getElementById("gmailStatus").innerHTML =
+        "Gmail not verified";
+
+    document.getElementById("gmailStatus").style.color =
+        "#dc3545";
+
+
+    document.getElementById("verifyGmailBtn").style.display =
+        "inline-block";
+
+    document.getElementById("checkVerificationBtn").style.display =
+        "inline-block";
+
+});
+
+
+
+// =====================================================
+// FORM SUBMIT
+// =====================================================
+form.addEventListener('submit', e => {
+
+    e.preventDefault();
+
+
+    // Gmail verification check
+    if (!gmailVerified) {
+
+        alert(
+            "Please verify your Gmail ID first."
+        );
+
+        return;
+    }
+
+
+    const submitButton =
+        form.querySelector('[type="submit"]');
+
+
+    submitButton.disabled = true;
+
+
+    const originalButtonText =
+        submitButton.value;
+
+
+    submitButton.value =
+        "Sending...";
+
+
+    fetch(scriptURL, {
+
+        method: 'POST',
+
+        body: new FormData(form)
+
+    })
+
+    .then(response => {
+
+        if (response.ok) {
+
+            alert(
+                "Thanks for contacting me!.. I will contact you soon.."
+            );
+
+            form.reset();
+
+            gmailVerified = false;
+
+            location.reload();
+
+        } else {
+
+            alert(
+                "Error submitting message!"
+            );
+
+
+            submitButton.disabled =
+                false;
+
+            submitButton.value =
+                originalButtonText;
+
+        }
+
+    })
+
+    .catch(error => {
+
+        console.error(
+            'Error!',
+            error.message
+        );
+
+
+        alert(
+            "Something went wrong!"
+        );
+
+
+        submitButton.disabled =
+            false;
+
+        submitButton.value =
+            originalButtonText;
+
+    });
+
 });
 </script>
+
   <script>
         const button = document.getElementById("submitBtn");
 
